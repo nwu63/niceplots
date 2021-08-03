@@ -10,9 +10,8 @@ def setRCParams():
     # Set some defaults for generating nice, Doumont-esque, plots
     plt.rcParams["font.family"] = "sans-serif"
     plt.rcParams["font.sans-serif"] = ["CMU Bright"]
-    plt.rcParams["font.size"] = 24
+    # plt.rcParams["font.size"] = 24
     plt.rcParams["figure.dpi"] = 100
-    plt.rcParams["figure.figsize"] = [12, 6.75]
     plt.rcParams["savefig.dpi"] = 600
     plt.rcParams["axes.spines.top"] = False
     plt.rcParams["axes.spines.right"] = False
@@ -20,7 +19,7 @@ def setRCParams():
     plt.rcParams["text.latex.preamble"] = r"\usepackage{cmbright}"
 
     plt.rcParams["legend.columnspacing"] = 0.2
-    plt.rcParams["legend.frameon"] = False
+    # plt.rcParams["legend.frameon"] = False
     plt.rcParams["figure.constrained_layout.use"] = True
 
     plt.rcParams["patch.edgecolor"] = "w"
@@ -78,12 +77,12 @@ def get_delftColors():
 
 
 def handle_close(evt):
-    """ Handler function that saves the figure as a pdf if the window is closed. """
+    """Handler function that saves the figure as a pdf if the window is closed."""
     plt.tight_layout()
     plt.savefig("figure.pdf")
 
 
-def adjust_spines(ax=None, spines=["left", "bottom"], outward=False):
+def adjust_spines(ax=None, spines=["left", "bottom"], outward=False, dist=12):
     """Function to shift the axes/spines so they have that offset
     Doumont look."""
     if ax is None:
@@ -94,7 +93,7 @@ def adjust_spines(ax=None, spines=["left", "bottom"], outward=False):
         if loc in spines:
             ax.spines[loc].set_visible(True)
             if outward:
-                spine.set_position(("outward", 12))  # outward by 18 points
+                spine.set_position(("outward", dist))  # outward by 18 points
         else:
             ax.spines[loc].set_visible(False)  # don't draw spine
 
@@ -118,7 +117,7 @@ def adjust_spines(ax=None, spines=["left", "bottom"], outward=False):
 
 
 def draggable_legend(axis=None, color_on=True):
-    """ Function to create draggable labels on a plot. """
+    """Function to create draggable labels on a plot."""
     if axis is None:
         axis = plt.gca()
 
@@ -260,6 +259,8 @@ def stacked_plots(
     data_dict_list,
     figsize=(12, 10),
     outward=True,
+    logX=False,
+    logY=False,
     filename="stacks.png",
     xticks=None,
     cushion=0.1,
@@ -330,6 +331,10 @@ def stacked_plots(
             ax.xaxis.set_ticks_position("bottom")
             if xticks is not None:
                 ax.xaxis.set_ticks(xticks)
+        if logX:
+            axarr[i].set_xscale("log")
+        if logY:
+            axarr[i].set_yscale("log")
 
     f.align_labels()
     axarr[-1].set_xlabel(xlabel)
@@ -345,7 +350,7 @@ def stacked_plots(
 
 
 def all():
-    """ Runs all of the functions provided in this module. """
+    """Runs all of the functions provided in this module."""
     adjust_spines()
     draggable_legend()
     plt.gcf().canvas.mpl_connect("close_event", handle_close)
